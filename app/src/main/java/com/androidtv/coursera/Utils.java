@@ -61,6 +61,7 @@ public class Utils extends Application {
 
     public static CookieManager mCookieManager;
     public static String mUserId;
+    public static String cookieString;
 
     /*
      * Making sure public utility methods remain static
@@ -68,8 +69,24 @@ public class Utils extends Application {
     public Utils(Context ctx) {
         mCookieManager=new CookieManager();
         CookieHandler.setDefault(mCookieManager);
-        Log.d("cookie","done!");
+        //mUserId=null;
+        //cookieString=null;
         loginAuth(ctx);
+    }
+
+    public Utils(Context ctx,String userid,String cookiestring) {
+        mCookieManager=new CookieManager();
+        CookieHandler.setDefault(mCookieManager);
+        setUserId(userid);
+        setCookieString(cookiestring);
+    }
+
+    public static void setUserId(String uid) {
+        mUserId=uid;
+    }
+
+    public static String getUserId() {
+        return mUserId;
     }
 
     private static String getStringResourceByName(Context ctx,String aString) {
@@ -116,7 +133,7 @@ public class Utils extends Application {
             for (Integer i=0;i<jsArr.length();i++) {
                 JSONObject courseObj = jsArr.getJSONObject(i);
                 rtjson.append("{\"title\":\"");
-                rtjson.append(courseObj.optString("name"));
+                rtjson.append(courseObj.optString("name").replace("\"",""));
                 rtjson.append("\",\"slug\":\"");
                 rtjson.append(courseObj.optString("slug"));
                 rtjson.append("\",\"courseId\":\"");
@@ -142,9 +159,6 @@ public class Utils extends Application {
         //
         StringBuilder rtjson = new StringBuilder("{\"re\":[");
         try {
-            while (mUserId==null) {
-                sleep(1000);
-            }
             String urlString = ctx.getString(R.string.provider)+ctx.getString(R.string.api_getLectures)+mUserId+"~"+mCourse.slug;
             Log.d("url",urlString);
             //String jsonString = getHTMLWithCookies(ctx,ctx.getString(R.string.provider)+ctx.getString(R.string.api_getLectures)+mUserId+"~"+mcourse.slug);
@@ -161,9 +175,9 @@ public class Utils extends Application {
                         JSONObject lectureObj = jsArr_items.getJSONObject(k);
                         if (lectureObj.getJSONObject("contentSummary").optString("typeName").equals("lecture")) {
                             rtjson.append("{\"name\":\"");
-                            rtjson.append(lectureObj.optString("name"));
+                            rtjson.append(lectureObj.optString("name").replace("\"",""));
                             rtjson.append("\",\"module\":\"");
-                            rtjson.append(moduleObj.optString("name"));
+                            rtjson.append(moduleObj.optString("name").replace("\"",""));
                             rtjson.append("\",\"courseitemid\":\"");
                             rtjson.append(mCourse.courseId);
                             rtjson.append("~");
@@ -181,10 +195,11 @@ public class Utils extends Application {
     }
 
     /** get video playback url by courseId & itemId **/
-    public static String getVideoUrl(Context ctx, Course mcourse) {
+    public static String getVideoUrl(Context ctx, Course mCourse) {
+        Log.d("getVideoURL",mCourse.courseId);
         StringBuilder rtjson = new StringBuilder("{\"re\":\"");
         try {
-            String jsonString = getHTMLWithCookies(ctx,ctx.getString(R.string.provider)+ctx.getString(R.string.api_getVideos_prefix)+mcourse.courseId+"?"+ctx.getString(R.string.api_getVideos_postfix));
+            String jsonString = getHTMLWithCookies(ctx,ctx.getString(R.string.provider)+ctx.getString(R.string.api_getVideos_prefix)+mCourse.courseId+"?"+ctx.getString(R.string.api_getVideos_postfix));
             JSONObject jsObj = new JSONObject(jsonString);
             JSONArray jsArr = jsObj.getJSONObject("linked").getJSONArray("onDemandVideos.v1");
             for (Integer i=0;i<jsArr.length();i++) {
@@ -241,11 +256,24 @@ public class Utils extends Application {
      *
      * @return the html representation of the response
      */
-    public static String getCookiesString() throws IOException {
+    public static void setCookieString() throws IOException {
         if (mCookieManager.getCookieStore().getCookies().size()>0) {
-            return TextUtils.join(";",mCookieManager.getCookieStore().getCookies());
+            cookieString=TextUtils.join(";",mCookieManager.getCookieStore().getCookies());
+            //return cookieString;
         }
-        return null;
+    }
+
+    public void setCookieString(String extCookieString) {
+        String[] cl = extCookieString.split(";");
+        for (String c:cl) {
+            String[] ca=c.split("=");
+            mCookieManager.getCookieStore().add(null, new HttpCookie(ca[0],ca[1]));
+        }
+        cookieString=extCookieString;
+    }
+
+    public static String getCookieString() {
+        return cookieString;
     }
 
     /**
@@ -269,24 +297,17 @@ public class Utils extends Application {
      * process login auth.
      */
     public static void loginAuth(Context ctx) {
-        Log.d("loginAuth","start");
         try {
             if (getCookieValue("CAUTH") == null) {
                 if (getCookieValue("CSRF3-Token") == null) {
-                    Log.d("loginAuth","start get cookie");
-                    getHTMLWithCookies(ctx, ctx.getString(R.string.provider));
-                    Log.d("loginAuth","end get cookie");
+                    getHTMLWithCookies(ctx, ctx.getString(R.string.provider)+"eventing/info.v2");
                 }
-                Log.d("loginAuth","start login post");
                 postHTMLWithCookies(ctx, ctx.getString(R.string.provider) + ctx.getString(R.string.api_login) + getCookieValue("CSRF3-Token"), "email=" + ctx.getString(R.string.email) + "&password=" + ctx.getString(R.string.password));
-                Log.d("loginAuth","end login post");
             }
-            Log.d("loginAuth","start get uid");
             if (mUserId==null) {
-                JSONObject jsObj = new JSONObject(getHTMLWithCookies(ctx, ctx.getString(R.string.api_showme)));
-                mUserId=jsObj.getJSONArray("elements").getJSONObject(0).optString("userId");
+                JSONObject jsObj = new JSONObject(getHTMLWithCookies(ctx, ctx.getString(R.string.provider) +ctx.getString(R.string.api_showme)));
+                setUserId(jsObj.getJSONArray("elements").getJSONObject(0).optString("userId"));
             }
-            Log.d("loginAuth","end get uid");
         } catch (Exception e) {
             //
         } finally {
@@ -316,10 +337,9 @@ public class Utils extends Application {
         urlConnection.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
         urlConnection.setRequestProperty( "charset", "utf-8");
         urlConnection.setRequestProperty( "Content-Length", String.valueOf( postData.length ));
-        if (getCookiesString()!=null) {
-            urlConnection.setRequestProperty("Cookie", getCookiesString());
+        if (cookieString!=null) {
+            urlConnection.setRequestProperty("Cookie", getCookieString());
         }
-        Log.d("Post",getCookiesString());
         urlConnection.setUseCaches( false );
         urlConnection.setDoOutput(true);
         urlConnection.getOutputStream().write(postData);
@@ -334,6 +354,7 @@ public class Utils extends Application {
                     mCookieManager.getCookieStore().add(null, HttpCookie.parse(cookie).get(0));
                 }
             }
+            setCookieString();
             /*
             reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(),
                     "utf-8"));
@@ -367,32 +388,22 @@ public class Utils extends Application {
      */
     public static String getHTMLWithCookies(Context ctx, String urlString) throws IOException {
     //public static String getHTMLWithCookies(String urlString) throws IOException {
-        Log.d("get",urlString);
         BufferedReader reader = null;
-        Log.d("get","1");
         //CookieManager mCookieManager = new CookieManager();
         //CookieHandler.setDefault(mCookieManager);
         String ua = ctx.getString(R.string.ua);
-        Log.d("get","2");
         //String ua = "Mozilla/5.0";
         String html = "";
-        Log.d("get","3");
         //Log.d("url",urlString);
         URL url = new URL(urlString);
-        Log.d("get","4");
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        Log.d("get","5");
         //URLConnection urlConnection = url.openConnection();
         urlConnection.setRequestMethod("GET");
-        Log.d("get","6");
         urlConnection.setRequestProperty("User-Agent",ua);
-        Log.d("get",ua);
-        if (getCookiesString()!=null) {
-            urlConnection.setRequestProperty("Cookie", getCookiesString());
+        if (cookieString!=null) {
+            urlConnection.setRequestProperty("Cookie", cookieString);
         }
-        Log.d("get",TextUtils.join(";",mCookieManager.getCookieStore().getCookies()));
         urlConnection.connect();
-        Log.d("get","9");
 
         try {
             //get response cookie and store locally
@@ -404,6 +415,7 @@ public class Utils extends Application {
                     //Log.d("cookie",cookie);
                 }
             }
+            setCookieString();
             //get response body string
             reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(),
                     "utf-8"));
@@ -415,7 +427,7 @@ public class Utils extends Application {
             html = sb.toString();
             return html;
         } catch (Exception e) {
-            Log.e("Get","Failed");
+            Log.e("Get","Failed"+e.toString());
             return null;
         } finally {
             urlConnection.disconnect();

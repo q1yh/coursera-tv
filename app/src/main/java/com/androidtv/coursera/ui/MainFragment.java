@@ -18,11 +18,13 @@ package com.androidtv.coursera.ui;
 
 import android.app.Activity;
 import android.app.LoaderManager;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v17.leanback.app.BrowseFragment;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.CursorObjectAdapter;
@@ -33,7 +35,9 @@ import android.support.v17.leanback.widget.OnItemViewClickedListener;
 import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
+import android.util.Log;
 
+import com.androidtv.coursera.Utils;
 import com.androidtv.coursera.data.FetchCourseService;
 import com.androidtv.coursera.data.CourseContract;
 import com.androidtv.coursera.model.Course;
@@ -43,12 +47,16 @@ import com.androidtv.coursera.presenter.CardPresenter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.os.SystemClock.sleep;
+
 /*
  * Main class to show BrowseFragment with header and rows of Courses
  */
 public class MainFragment extends BrowseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
     private ArrayObjectAdapter mCategoryRowAdapter;
     private static final int CATEGORY_LOADER = 123; // Unique ID for Category Loader.
+    private static Utils mUtils;
+    private static Context mContext;
 
     // Maps a Loader Id to its CursorObjectAdapter.
     private Map<Integer, CursorObjectAdapter> mCourseCursorAdapters;
@@ -69,6 +77,9 @@ public class MainFragment extends BrowseFragment implements LoaderManager.Loader
     public void onActivityCreated(Bundle savedInstanceState) {
         // Final initialization, modifying UI elements.
         super.onActivityCreated(savedInstanceState);
+        mContext=getActivity().getApplication().getApplicationContext();
+        mUtils = new Utils(mContext);
+        new Thread(netInitialUtils).start();
         setupEventListeners();
         prepareEntranceTransition();
 
@@ -79,6 +90,18 @@ public class MainFragment extends BrowseFragment implements LoaderManager.Loader
 
         //updateRecommendations();
     }
+
+    Runnable netInitialUtils = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                mUtils.loginAuth(mContext);
+            } catch (Exception e) {
+                Log.e("Initial Utils", "Failed");
+                e.printStackTrace();
+            }
+        }
+    };
 
     @Override
     public void onDestroy() {
@@ -176,6 +199,15 @@ public class MainFragment extends BrowseFragment implements LoaderManager.Loader
         } else {
             // Start an Intent to fetch the Courses.
             Intent serviceIntent = new Intent(getActivity(), FetchCourseService.class);
+            try {
+                while (mUtils.getUserId()==null) {
+                    sleep(1000);
+                }
+                serviceIntent.putExtra("Cookies", mUtils.getCookieString());
+                serviceIntent.putExtra("UserId", mUtils.getUserId());
+            } catch (Exception e) {
+                //
+            }
             getActivity().startService(serviceIntent);
         }
     }
@@ -196,9 +228,14 @@ public class MainFragment extends BrowseFragment implements LoaderManager.Loader
                 RowPresenter.ViewHolder rowViewHolder, Row row) {
 
             if (item instanceof Course) {
-                Course Course = (Course) item;
+                Course vCourse = (Course) item;
                 Intent intent = new Intent(getActivity(), PlaybackActivity.class);
-                intent.putExtra("Course", Course);
+                intent.putExtra("Course", vCourse);
+                while (mUtils.getUserId()==null) {
+                    sleep(1000);
+                }
+                intent.putExtra("Cookies", mUtils.getCookieString());
+                intent.putExtra("UserId", mUtils.getUserId());
                 getActivity().startActivity(intent);
 
             }

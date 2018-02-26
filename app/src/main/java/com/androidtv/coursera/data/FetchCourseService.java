@@ -18,10 +18,14 @@ package com.androidtv.coursera.data;
 
 import android.app.IntentService;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.androidtv.coursera.Utils;
+
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,11 +46,14 @@ public class FetchCourseService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent workIntent) {
-        CourseDbBuilder builder = new CourseDbBuilder(getApplicationContext());
+        Context mContext = getApplication();
+        CourseDbBuilder builder = new CourseDbBuilder(mContext);
+        Utils mUtils = new Utils(mContext,workIntent.getStringExtra("UserId"),workIntent.getStringExtra("Cookies"));
 
         try {
-            List<ContentValues> contentValuesList =
-                    builder.fetch();
+            JSONObject allCoursesJson = new JSONObject(mUtils.getAllCourses(mContext));
+            List<ContentValues> contentValuesList = builder.buildMedia(allCoursesJson);
+                    //builder.fetch();
             ContentValues[] downloadedCourseContentValues =
                     contentValuesList.toArray(new ContentValues[contentValuesList.size()]);
             getApplicationContext().getContentResolver().bulkInsert(CourseContract.CourseEntry.CONTENT_URI,

@@ -51,6 +51,7 @@ public class PlaybackActivity extends LeanbackActivity {
         super.onCreate(savedInstanceState);
         mContext = getApplicationContext();
         mCourse = getIntent().getParcelableExtra("Course");
+
         setContentView(R.layout.activity_playback);
         Fragment fragment =
                 getFragmentManager().findFragmentByTag(getString(R.string.playback_tag));

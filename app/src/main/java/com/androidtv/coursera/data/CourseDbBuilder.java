@@ -89,7 +89,7 @@ public class CourseDbBuilder {
 
                 String title = Course.optString(TAG_TITLE);
                 String courseSlug = Course.optString(TAG_SLUG);
-                Integer courseId = Course.optInt(TAG_COURSEID);
+                String courseId = Course.optString(TAG_COURSEID);
                 String cardImageUrl = Course.optString(TAG_CARD_THUMB);
 
                 ContentValues CourseValues = new ContentValues();

@@ -86,7 +86,7 @@ public class PlaybackFragment extends VideoFragment {
         super.onCreate(savedInstanceState);
         mContext = getActivity().getApplicationContext();
         mCourse = getActivity().getIntent().getParcelableExtra("Course");
-        mUtils = new Utils(mContext);
+        mUtils = new Utils(mContext,getActivity().getIntent().getStringExtra("UserId"),getActivity().getIntent().getStringExtra("Cookies"));
         mPlaylist = new Playlist();
         //get playlist if any
         new Thread(netGetLectures).start();
@@ -176,7 +176,7 @@ public class PlaybackFragment extends VideoFragment {
         netGetVideoUrl(Course c) {vCourse=c;}
         public void run() {
             try {
-                if (vCourse.equals(mCourse)) {
+                if (vCourse.cardImageUrl!="") {
                     vCourse = mPlaylist.getFirstCourse();
                 }
                 JSONObject jsObj = new JSONObject(mUtils.getVideoUrl(mContext,vCourse));
@@ -260,10 +260,10 @@ public class PlaybackFragment extends VideoFragment {
         }
     }
 
-    private void play(Course Course) {
+    private void play(Course vCourse) {
         try {
-            new Thread(new netGetVideoUrl(Course)).start();
-            mPlayerGlue.setTitle(Course.title);
+            new Thread(new netGetVideoUrl(vCourse)).start();
+            mPlayerGlue.setTitle(vCourse.title);
             //prepareMediaForPlaying(Uri.parse(Utils.getCourseUrl(mContext,Course.CourseUrl)));
             //prepareMediaForPlaying(Uri.parse(getResources().getString(R.string.Courseplayback_url_prefix) + Course.CourseUrl));
             //mPlayerGlue.play();
@@ -345,9 +345,9 @@ public class PlaybackFragment extends VideoFragment {
                 Row row) {
 
             if (item instanceof Course) {
-                Course Course = (Course) item;
-                mPlaylist.setCurrentPosition(mPlaylist.getCoursePosition(Course));
-                play(Course);
+                Course vCourse = (Course) item;
+                mPlaylist.setCurrentPosition(mPlaylist.getCoursePosition(vCourse));
+                play(vCourse);
             }
         }
     }
