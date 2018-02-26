@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.androidtv.coursera">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="true" />
+
+    <application
+        android:allowBackup="false"
+        android:banner="@drawable/coursera_banner"
+        android:icon="@drawable/coursera_banner"
+        android:label="@string/app_name"
+        android:logo="@drawable/coursera_banner"
+        android:theme="@style/Theme.Leanback">
+        <activity
+            android:name=".ui.MainActivity"
+            android:icon="@drawable/coursera_banner"
+            android:label="@string/app_name"
+            android:logo="@drawable/coursera_banner"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.Leanback.Browse">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data android:name="android.app.default_searchable"
+            android:value=".ui.CourseDetailsActivity" />
+
+        <activity
+            android:name=".ui.PlaybackActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|layoutDirection"
+            android:launchMode="singleTask"
+            android:resizeableActivity="true" />
+
+        <!-- Provides search suggestions for keywords against Course metadata. -->
+        <provider
+            android:name=".data.CourseProvider"
+            android:authorities="${packageName}"
+            android:exported="true">
+            <path-permission
+                android:pathPrefix="/search"
+                android:readPermission="android.permission.GLOBAL_SEARCH" />
+        </provider>
+
+        <service
+            android:name=".data.FetchCourseService"
+            android:exported="false" />
+
+    </application>
+
+</manifest>
