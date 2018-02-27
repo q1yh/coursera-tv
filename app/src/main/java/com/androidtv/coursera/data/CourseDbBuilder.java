@@ -114,7 +114,7 @@ public class CourseDbBuilder {
     private JSONObject fetchJSON() throws Exception {
         try {
             Utils mUtils = new Utils(mContext);
-            String json = mUtils.getAllCourses(mContext);
+            String json = Utils.getAllCourses(mContext);
             return new JSONObject(json);
         } finally {
             //

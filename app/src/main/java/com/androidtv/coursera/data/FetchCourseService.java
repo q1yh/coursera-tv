@@ -51,7 +51,7 @@ public class FetchCourseService extends IntentService {
         Utils mUtils = new Utils(mContext,workIntent.getStringExtra("UserId"),workIntent.getStringExtra("Cookies"));
 
         try {
-            JSONObject allCoursesJson = new JSONObject(mUtils.getAllCourses(mContext));
+            JSONObject allCoursesJson = new JSONObject(Utils.getAllCourses(mContext));
             List<ContentValues> contentValuesList = builder.buildMedia(allCoursesJson);
                     //builder.fetch();
             ContentValues[] downloadedCourseContentValues =

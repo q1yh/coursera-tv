@@ -138,10 +138,10 @@ public class PlaybackFragment extends VideoFragment {
         public void run() {
             //String epCourseUrl = getString(R.string.Courseplayback_url_prefix)+"/"+mCourse.CourseUrl.substring(1).replace('/','_')+".json";
             try {
-                while (mUtils.getUserId()==null||mUtils.getCookieString()==null) {
+                while (Utils.getUserId()==null|| Utils.getCookieString()==null) {
                     sleep(1000);
                 }
-                String js = mUtils.getLecturesByCourse(mContext,mCourse);
+                String js = Utils.getLecturesByCourse(mContext,mCourse);
                 Message msg = new Message();
                 Bundle data = new Bundle();
                 data.putString("jsonstring",js);
@@ -163,10 +163,10 @@ public class PlaybackFragment extends VideoFragment {
                 if (vCourse.cardImageUrl!="") {
                     vCourse = mPlaylist.getFirstCourse();
                 }
-                while (mUtils.getUserId()==null) {
+                while (Utils.getUserId()==null) {
                     sleep(1000);
                 }
-                JSONObject jsObj = new JSONObject(mUtils.getVideoUrl(mContext,vCourse));
+                JSONObject jsObj = new JSONObject(Utils.getVideoUrl(mContext,vCourse));
                 String vurl = jsObj.optString("re").split(",")[0];
                 Message msg = new Message();
                 Bundle data = new Bundle();
@@ -305,7 +305,7 @@ public class PlaybackFragment extends VideoFragment {
         }
         mPlaylist.setCurrentPosition(playlistPositionBackup);
         return episodeCoursesAdapter;
-    };
+    }
 
     public void skipToNext() {
         mPlayerGlue.next();

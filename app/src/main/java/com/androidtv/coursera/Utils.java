@@ -159,8 +159,6 @@ public class Utils extends Application {
         //
         StringBuilder rtjson = new StringBuilder("{\"re\":[");
         try {
-            //String urlString = ctx.getString(R.string.provider)+ctx.getString(R.string.api_getLectures)+mUserId+"~"+mCourse.slug;
-            //Log.d("url",urlString);
             String jsonString = getHTMLWithCookies(ctx,ctx.getString(R.string.provider)+ctx.getString(R.string.api_getLectures)+mUserId+"~"+mCourse.slug);
             //String jsonString = getHTMLWithCookies(ctx,urlString);
             JSONObject jsObj = new JSONObject(jsonString);

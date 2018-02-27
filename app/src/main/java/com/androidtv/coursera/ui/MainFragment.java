@@ -95,7 +95,7 @@ public class MainFragment extends BrowseFragment implements LoaderManager.Loader
         @Override
         public void run() {
             try {
-                mUtils.loginAuth(mContext);
+                Utils.loginAuth(mContext);
             } catch (Exception e) {
                 Log.e("Initial Utils", "Failed");
                 e.printStackTrace();
@@ -200,11 +200,11 @@ public class MainFragment extends BrowseFragment implements LoaderManager.Loader
             // Start an Intent to fetch the Courses.
             Intent serviceIntent = new Intent(getActivity(), FetchCourseService.class);
             try {
-                while (mUtils.getUserId()==null||mUtils.getCookieString()==null) {
+                while (Utils.getUserId()==null|| Utils.getCookieString()==null) {
                     sleep(1000);
                 }
-                serviceIntent.putExtra("Cookies", mUtils.getCookieString());
-                serviceIntent.putExtra("UserId", mUtils.getUserId());
+                serviceIntent.putExtra("Cookies", Utils.getCookieString());
+                serviceIntent.putExtra("UserId", Utils.getUserId());
             } catch (Exception e) {
                 //
             }
@@ -231,11 +231,11 @@ public class MainFragment extends BrowseFragment implements LoaderManager.Loader
                 Course vCourse = (Course) item;
                 Intent intent = new Intent(getActivity(), PlaybackActivity.class);
                 intent.putExtra("Course", vCourse);
-                while (mUtils.getUserId()==null||mUtils.getCookieString()==null) {
+                while (Utils.getUserId()==null|| Utils.getCookieString()==null) {
                     sleep(1000);
                 }
-                intent.putExtra("Cookies", mUtils.getCookieString());
-                intent.putExtra("UserId", mUtils.getUserId());
+                intent.putExtra("Cookies", Utils.getCookieString());
+                intent.putExtra("UserId", Utils.getUserId());
                 getActivity().startActivity(intent);
 
             }
