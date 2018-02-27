@@ -200,7 +200,7 @@ public class MainFragment extends BrowseFragment implements LoaderManager.Loader
             // Start an Intent to fetch the Courses.
             Intent serviceIntent = new Intent(getActivity(), FetchCourseService.class);
             try {
-                while (mUtils.getUserId()==null) {
+                while (mUtils.getUserId()==null||mUtils.getCookieString()==null) {
                     sleep(1000);
                 }
                 serviceIntent.putExtra("Cookies", mUtils.getCookieString());
@@ -231,7 +231,7 @@ public class MainFragment extends BrowseFragment implements LoaderManager.Loader
                 Course vCourse = (Course) item;
                 Intent intent = new Intent(getActivity(), PlaybackActivity.class);
                 intent.putExtra("Course", vCourse);
-                while (mUtils.getUserId()==null) {
+                while (mUtils.getUserId()==null||mUtils.getCookieString()==null) {
                     sleep(1000);
                 }
                 intent.putExtra("Cookies", mUtils.getCookieString());

@@ -61,6 +61,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import java.util.Iterator;
 
+import static android.os.SystemClock.sleep;
+
 
 /**
  * Plays selected Course, loads playlist and related Courses, and delegates playback to {@link
@@ -86,12 +88,10 @@ public class PlaybackFragment extends VideoFragment {
         super.onCreate(savedInstanceState);
         mContext = getActivity().getApplicationContext();
         mCourse = getActivity().getIntent().getParcelableExtra("Course");
+        //Log.d("course",mCourse.courseId);
         mUtils = new Utils(mContext,getActivity().getIntent().getStringExtra("UserId"),getActivity().getIntent().getStringExtra("Cookies"));
         mPlaylist = new Playlist();
-        //get playlist if any
         new Thread(netGetLectures).start();
-        //mUtils.notify();
-        //new Thread(netInitialUtils).start();
     }
 
     Handler handler = new Handler() {
@@ -99,27 +99,30 @@ public class PlaybackFragment extends VideoFragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             Bundle data = msg.getData();
-            String vu = data.getString("videourl");
             String js = data.getString("jsonstring");
-            String uid = data.getString("userid");
-            if (uid!=null) {
-                new Thread(netGetLectures).start();
-            }
+            String vu = data.getString("videourl");
             if (js!=null) {
                 Log.d("js",js);
                 try {
                     JSONArray ja = new JSONObject(js).getJSONArray("re");
-                    for (Integer i=0;i<ja.length();i++) {
-                        JSONObject jo = ja.getJSONObject(i);
-                        mPlaylist.add(Course.CourseBuilder.buildFromExtra(mCourse.id,mCourse.title,jo.optString("name"),jo.optString("module"),jo.optString("courseitemid"),""));
+                    if (ja.length()>0) {
+                        for (Integer i = 0; i < ja.length(); i++) {
+                            JSONObject jo = ja.getJSONObject(i);
+                            mPlaylist.add(Course.CourseBuilder.buildFromExtra(mCourse.id, mCourse.title, jo.optString("name"), jo.optString("module"), jo.optString("courseitemid"), ""));
+                        }
+                        mEpisodeActionAdapter = setupEpisodesCourses();
+                        ArrayObjectAdapter mRowsAdapter = initializeEpisodesRow();
+                        setAdapter(mRowsAdapter);
+                        play(mCourse);
+                    } else {
+                        getActivity().getFragmentManager().popBackStack();
+                        getActivity().finish();
                     }
-                    mEpisodeActionAdapter = setupEpisodesCourses();
-                    ArrayObjectAdapter mRowsAdapter = initializeEpisodesRow();
-                    setAdapter(mRowsAdapter);
-                    play(mCourse);
                 } catch (Exception e) {
                     Log.e("FetchEpisodeFailed", "Get episodes failed");
-                    e.printStackTrace();
+                    getActivity().getFragmentManager().popBackStack();
+                    getActivity().finish();
+                    //e.printStackTrace();
                 }
             }
             if (vu!=null) {
@@ -130,33 +133,14 @@ public class PlaybackFragment extends VideoFragment {
         }
     };
 
-    Runnable netInitialUtils = new Runnable() {
-        @Override
-        public void run() {
-            //String epCourseUrl = getString(R.string.Courseplayback_url_prefix)+"/"+mCourse.CourseUrl.substring(1).replace('/','_')+".json";
-            try {
-                //String js = Utils.fetchJSONString(epCourseUrl);
-                mUtils= new Utils(mContext);
-                Message msg = new Message();
-                Bundle data = new Bundle();
-                data.putString("userid","ok");
-                //Log.d("uid",mUtils.getUserId());
-                msg.setData(data);
-                handler.sendMessage(msg);
-                //Log.d("fetchResult",js.toString());
-            } catch (Exception e) {
-                Log.e("Initial Utils", "Failed");
-                e.printStackTrace();
-            }
-        }
-    };
-
     Runnable netGetLectures = new Runnable() {
         @Override
         public void run() {
             //String epCourseUrl = getString(R.string.Courseplayback_url_prefix)+"/"+mCourse.CourseUrl.substring(1).replace('/','_')+".json";
             try {
-                //String js = Utils.fetchJSONString(epCourseUrl);
+                while (mUtils.getUserId()==null||mUtils.getCookieString()==null) {
+                    sleep(1000);
+                }
                 String js = mUtils.getLecturesByCourse(mContext,mCourse);
                 Message msg = new Message();
                 Bundle data = new Bundle();
@@ -166,7 +150,7 @@ public class PlaybackFragment extends VideoFragment {
                 //Log.d("fetchResult",js.toString());
             } catch (Exception e) {
                 Log.e("Fetch Lectures", "Failed");
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
     };
@@ -179,10 +163,14 @@ public class PlaybackFragment extends VideoFragment {
                 if (vCourse.cardImageUrl!="") {
                     vCourse = mPlaylist.getFirstCourse();
                 }
+                while (mUtils.getUserId()==null) {
+                    sleep(1000);
+                }
                 JSONObject jsObj = new JSONObject(mUtils.getVideoUrl(mContext,vCourse));
                 String vurl = jsObj.optString("re").split(",")[0];
                 Message msg = new Message();
                 Bundle data = new Bundle();
+                Log.d("vurl",vurl);
                 data.putString("videourl",vurl);
                 msg.setData(data);
                 handler.sendMessage(msg);

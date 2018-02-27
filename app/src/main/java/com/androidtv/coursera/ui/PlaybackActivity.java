@@ -42,15 +42,15 @@ public class PlaybackActivity extends LeanbackActivity {
     // Off-condition slightly smaller for button debouncing.
     private static final float GAMEPAD_TRIGGER_INTENSITY_OFF = 0.45f;
     private boolean gamepadTriggerPressed = false;
-    private Course mCourse;
+    //private Course mCourse;
     private PlaybackFragment mPlaybackFragment;
-    private Context mContext;
+    //private Context mContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = getApplicationContext();
-        mCourse = getIntent().getParcelableExtra("Course");
+        //mContext = getApplicationContext();
+        //mCourse = getIntent().getParcelableExtra("Course");
 
         setContentView(R.layout.activity_playback);
         Fragment fragment =

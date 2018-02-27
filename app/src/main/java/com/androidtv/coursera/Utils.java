@@ -159,36 +159,41 @@ public class Utils extends Application {
         //
         StringBuilder rtjson = new StringBuilder("{\"re\":[");
         try {
-            String urlString = ctx.getString(R.string.provider)+ctx.getString(R.string.api_getLectures)+mUserId+"~"+mCourse.slug;
-            Log.d("url",urlString);
-            //String jsonString = getHTMLWithCookies(ctx,ctx.getString(R.string.provider)+ctx.getString(R.string.api_getLectures)+mUserId+"~"+mcourse.slug);
-            String jsonString = getHTMLWithCookies(ctx,urlString);
+            //String urlString = ctx.getString(R.string.provider)+ctx.getString(R.string.api_getLectures)+mUserId+"~"+mCourse.slug;
+            //Log.d("url",urlString);
+            String jsonString = getHTMLWithCookies(ctx,ctx.getString(R.string.provider)+ctx.getString(R.string.api_getLectures)+mUserId+"~"+mCourse.slug);
+            //String jsonString = getHTMLWithCookies(ctx,urlString);
             JSONObject jsObj = new JSONObject(jsonString);
-            JSONArray jsArr_weeks = jsObj.getJSONArray("elements").getJSONObject(0).getJSONArray("weeks");
-            for (Integer i=0;i<jsArr_weeks.length();i++) {
-                JSONObject weekObj = jsArr_weeks.getJSONObject(i);
-                JSONArray jsArr_modules = weekObj.getJSONArray("modules");
-                for (Integer j=0;j<jsArr_modules.length();j++) {
-                    JSONObject moduleObj = jsArr_modules.getJSONObject(j);
-                    JSONArray jsArr_items = moduleObj.getJSONArray("items");
-                    for (Integer k=0;k<jsArr_items.length();k++) {
-                        JSONObject lectureObj = jsArr_items.getJSONObject(k);
-                        if (lectureObj.getJSONObject("contentSummary").optString("typeName").equals("lecture")) {
-                            rtjson.append("{\"name\":\"");
-                            rtjson.append(lectureObj.optString("name").replace("\"",""));
-                            rtjson.append("\",\"module\":\"");
-                            rtjson.append(moduleObj.optString("name").replace("\"",""));
-                            rtjson.append("\",\"courseitemid\":\"");
-                            rtjson.append(mCourse.courseId);
-                            rtjson.append("~");
-                            rtjson.append(lectureObj.optString("id"));
-                            rtjson.append("\"},");
+            if (jsObj.getJSONArray("elements").length()>0) {
+                JSONArray jsArr_weeks = jsObj.getJSONArray("elements").getJSONObject(0).getJSONArray("weeks");
+                for (Integer i = 0; i < jsArr_weeks.length(); i++) {
+                    JSONObject weekObj = jsArr_weeks.getJSONObject(i);
+                    JSONArray jsArr_modules = weekObj.getJSONArray("modules");
+                    for (Integer j = 0; j < jsArr_modules.length(); j++) {
+                        JSONObject moduleObj = jsArr_modules.getJSONObject(j);
+                        JSONArray jsArr_items = moduleObj.getJSONArray("items");
+                        for (Integer k = 0; k < jsArr_items.length(); k++) {
+                            JSONObject lectureObj = jsArr_items.getJSONObject(k);
+                            if (lectureObj.getJSONObject("contentSummary").optString("typeName").equals("lecture")) {
+                                rtjson.append("{\"name\":\"");
+                                rtjson.append(lectureObj.optString("name").replace("\"", ""));
+                                rtjson.append("\",\"module\":\"");
+                                rtjson.append(moduleObj.optString("name").replace("\"", ""));
+                                rtjson.append("\",\"courseitemid\":\"");
+                                rtjson.append(mCourse.courseId);
+                                rtjson.append("~");
+                                rtjson.append(lectureObj.optString("id"));
+                                rtjson.append("\"},");
+                            }
                         }
                     }
                 }
+            } else {
+                rtjson.append(",");
             }
         } catch (Exception e) {
             Log.e("GetLecturesByCourse", "Failed");
+            rtjson.append(",");
         } finally {
             return rtjson.toString().substring(0,rtjson.length()-1)+"]}";
         }
@@ -266,10 +271,10 @@ public class Utils extends Application {
     public void setCookieString(String extCookieString) {
         String[] cl = extCookieString.split(";");
         for (String c:cl) {
-            String[] ca=c.split("=");
+            String[] ca=c.replace("\"","").split("=");
             mCookieManager.getCookieStore().add(null, new HttpCookie(ca[0],ca[1]));
         }
-        cookieString=extCookieString;
+        cookieString=extCookieString.replace("\"","");
     }
 
     public static String getCookieString() {
