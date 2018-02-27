@@ -17,7 +17,7 @@ git clone https://github.com/q1yh/coursera.git
 
 ## Screenshots
 
-[![Screenshot](screenshots.png)](https://raw.githubusercontent.com/q1yh/coursera-tv/master/screenshots.png)
+[![Screenshot](screenshots.png)](https://github.com/q1yh/coursera-tv/raw/master/screenshot.png)
 
 ## License
 
