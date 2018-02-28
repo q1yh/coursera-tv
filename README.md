@@ -21,7 +21,7 @@ git clone https://github.com/q1yh/coursera-tv.git
 [![Screenshot](screenshot.png)](https://github.com/q1yh/coursera-tv/raw/master/screenshot.png)
 
 ## Tutorial
-[![How to watch Coursera lectures on Android TV](http://img.youtube.com/vi/hjevrgtkij4/0.jpg)](https://www.youtube.com/watch?v=hjevrgtkij4 "How to watch Coursera lectures on Android TV")
+[![Youtube Tutorial Video: How to watch Coursera lectures on Android TV]](https://www.youtube.com/watch?v=hjevrgtkij4 "How to watch Coursera lectures on Android TV")
 
 ## License
 
