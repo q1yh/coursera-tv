@@ -9,7 +9,7 @@ This is an Android TV app, which is designed for watching your on-going or histo
 - Clone this repo:
 
 ```sh
-git clone https://github.com/q1yh/coursera.git
+git clone https://github.com/q1yh/coursera-tv.git
 ```
 - Edit string.xml file in /Res folder for fit your own account.
 
