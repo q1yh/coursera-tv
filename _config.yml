@@ -12,3 +12,5 @@ plugins:
   - jekyll-sitemap
 
 theme: jekyll-theme-cayman
+
+google_analytics: UA-114901455-1
