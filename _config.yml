@@ -1,6 +1,6 @@
 title: Coursera for Android TV
 description: An Android TV app designed for watching your Coursera lectures free.
-url: https://q1yh.github.io/coursera-tv/
+url: https://q1yh.github.io
 author: Yuheng QIU
 webmaster_verifications:
   google: nx51K0lSmR2_4b0BbonyG_vfpWutmHhSIRPyG8xpIM4
@@ -12,3 +12,5 @@ plugins:
   - jekyll-sitemap
 
 theme: jekyll-theme-cayman
+
+google_analytics: UA-114901455-1
