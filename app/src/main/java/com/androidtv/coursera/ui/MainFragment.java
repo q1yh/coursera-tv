@@ -56,7 +56,7 @@ public class MainFragment extends BrowseFragment implements LoaderManager.Loader
     private ArrayObjectAdapter mCategoryRowAdapter;
     private static final int CATEGORY_LOADER = 123; // Unique ID for Category Loader.
     private static Utils mUtils;
-    private static Context mContext;
+    private Context mContext;
 
     // Maps a Loader Id to its CursorObjectAdapter.
     private Map<Integer, CursorObjectAdapter> mCourseCursorAdapters;
