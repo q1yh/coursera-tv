@@ -42,6 +42,7 @@ public class MainActivity extends LeanbackActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mSharedPreferences.edit().putString("view_created",null).apply();
     }
 
     public void onResume() {
@@ -49,8 +50,9 @@ public class MainActivity extends LeanbackActivity {
         if (mSharedPreferences.getString("email",null)==null) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
-        } else {
+        } else if (mSharedPreferences.getString("view_created",null)==null) {
             setContentView(R.layout.main);
+            mSharedPreferences.edit().putString("view_created","true").apply();
         }
     }
 
