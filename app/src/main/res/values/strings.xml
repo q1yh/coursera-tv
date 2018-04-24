@@ -22,8 +22,6 @@
     <string name="CURRENT">Active</string>
     <string name="COMPLETED">Completed</string>
     <string name="INACTIVE">Historical</string>
-    <string name="email"><![CDATA[Your account email here]]></string>
-    <string name="password"><![CDATA[Your account password here]]></string>
     <string name="provider"><![CDATA[https://www.coursera.org/]]></string>
     <string name="api_login"><![CDATA[api/login/v3Ssr?csrf3-token=]]></string>
     <string name="api_showme"><![CDATA[api/memberships.v1?q=me&limit=1]]></string>

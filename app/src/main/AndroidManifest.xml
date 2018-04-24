@@ -39,6 +39,9 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true" />
 
+        <activity
+            android:name=".ui.LoginActivity" />
+
         <!-- Provides search suggestions for keywords against Course metadata. -->
         <provider
             android:name=".data.CourseProvider"

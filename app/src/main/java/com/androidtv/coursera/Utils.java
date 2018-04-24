@@ -21,7 +21,9 @@ import com.androidtv.coursera.model.Course;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
@@ -62,6 +64,7 @@ public class Utils extends Application {
     public static CookieManager mCookieManager;
     public static String mUserId;
     public static String cookieString;
+    private static SharedPreferences mSharedPreferences;
 
     /*
      * Making sure public utility methods remain static
@@ -69,6 +72,7 @@ public class Utils extends Application {
     public Utils(Context ctx) {
         mCookieManager=new CookieManager();
         CookieHandler.setDefault(mCookieManager);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         //mUserId=null;
         //cookieString=null;
         loginAuth(ctx);
@@ -77,6 +81,7 @@ public class Utils extends Application {
     public Utils(Context ctx,String userid,String cookiestring) {
         mCookieManager=new CookieManager();
         CookieHandler.setDefault(mCookieManager);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         setUserId(userid);
         setCookieString(cookiestring);
     }
@@ -145,7 +150,11 @@ public class Utils extends Application {
         } catch (Exception e) {
             Log.e("GetCourseByCategory", "Failed");
         } finally {
-            return rtjson.toString().substring(0,rtjson.length()-1)+"]}";
+            if (rtjson.lastIndexOf(",")==rtjson.length()-1) {
+                return rtjson.toString().substring(0, rtjson.length() - 1) + "]}";
+            } else {
+                return rtjson.toString()+"]}";
+            }
         }
     }
 
@@ -299,20 +308,24 @@ public class Utils extends Application {
     /**
      * process login auth.
      */
-    public static void loginAuth(Context ctx) {
+    public static String loginAuth(Context ctx) {
         try {
             if (getCookieValue("CAUTH") == null) {
                 if (getCookieValue("CSRF3-Token") == null) {
                     getHTMLWithCookies(ctx, ctx.getString(R.string.provider)+"eventing/info.v2");
                 }
-                postHTMLWithCookies(ctx, ctx.getString(R.string.provider) + ctx.getString(R.string.api_login) + getCookieValue("CSRF3-Token"), "email=" + ctx.getString(R.string.email) + "&password=" + ctx.getString(R.string.password));
+                //postHTMLWithCookies(ctx, ctx.getString(R.string.provider) + ctx.getString(R.string.api_login) + getCookieValue("CSRF3-Token"), "email=" + ctx.getString(R.string.email) + "&password=" + ctx.getString(R.string.password));
+                postHTMLWithCookies(ctx, ctx.getString(R.string.provider) + ctx.getString(R.string.api_login) + getCookieValue("CSRF3-Token"), "email=" + mSharedPreferences.getString("email","") + "&password=" + mSharedPreferences.getString("password",""));
             }
             if (mUserId==null) {
                 JSONObject jsObj = new JSONObject(getHTMLWithCookies(ctx, ctx.getString(R.string.provider) +ctx.getString(R.string.api_showme)));
                 setUserId(jsObj.getJSONArray("elements").getJSONObject(0).optString("userId"));
             }
+            return getUserId();
         } catch (Exception e) {
-            //
+            mSharedPreferences.edit().remove("email").apply();
+            mSharedPreferences.edit().remove("password").apply();
+            return "0";
         } finally {
             //
         }

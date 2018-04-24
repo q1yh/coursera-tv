@@ -18,7 +18,10 @@ package com.androidtv.coursera.ui;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.webkit.CookieSyncManager;
 
 import com.androidtv.coursera.R;
@@ -33,12 +36,24 @@ import java.net.CookieManager;
 public class MainActivity extends LeanbackActivity {
 
     //public static Utils mutils;
+    private SharedPreferences mSharedPreferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //mutils = new Utils(getApplicationContext());
-        //CookieSyncManager.createInstance(this);
-        setContentView(R.layout.main);
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
     }
+
+    public void onResume() {
+        super.onResume();
+        if (mSharedPreferences.getString("email",null)==null) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        } else {
+            //mutils = new Utils(getApplicationContext());
+            //CookieSyncManager.createInstance(this);
+            setContentView(R.layout.main);
+        }
+    }
+
 }
