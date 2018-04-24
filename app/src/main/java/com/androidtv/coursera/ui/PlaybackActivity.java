@@ -25,6 +25,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.WindowManager;
 
 import com.androidtv.coursera.R;
 import com.androidtv.coursera.Utils;
@@ -49,10 +50,8 @@ public class PlaybackActivity extends LeanbackActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //mContext = getApplicationContext();
-        //mCourse = getIntent().getParcelableExtra("Course");
-
         setContentView(R.layout.activity_playback);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Fragment fragment =
                 getFragmentManager().findFragmentByTag(getString(R.string.playback_tag));
         if (fragment instanceof PlaybackFragment) {
@@ -64,6 +63,7 @@ public class PlaybackActivity extends LeanbackActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         finish();
     }
 

@@ -323,8 +323,7 @@ public class Utils extends Application {
             }
             return getUserId();
         } catch (Exception e) {
-            mSharedPreferences.edit().remove("email").apply();
-            mSharedPreferences.edit().remove("password").apply();
+            mSharedPreferences.edit().clear();
             return "0";
         } finally {
             //

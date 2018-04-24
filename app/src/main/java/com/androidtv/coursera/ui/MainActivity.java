@@ -50,8 +50,6 @@ public class MainActivity extends LeanbackActivity {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         } else {
-            //mutils = new Utils(getApplicationContext());
-            //CookieSyncManager.createInstance(this);
             setContentView(R.layout.main);
         }
     }

@@ -88,7 +88,6 @@ public class PlaybackFragment extends VideoFragment {
         super.onCreate(savedInstanceState);
         mContext = getActivity().getApplicationContext();
         mCourse = getActivity().getIntent().getParcelableExtra("Course");
-        //Log.d("course",mCourse.courseId);
         mUtils = new Utils(mContext,getActivity().getIntent().getStringExtra("UserId"),getActivity().getIntent().getStringExtra("Cookies"));
         mPlaylist = new Playlist();
         new Thread(netGetLectures).start();
@@ -136,7 +135,6 @@ public class PlaybackFragment extends VideoFragment {
     Runnable netGetLectures = new Runnable() {
         @Override
         public void run() {
-            //String epCourseUrl = getString(R.string.Courseplayback_url_prefix)+"/"+mCourse.CourseUrl.substring(1).replace('/','_')+".json";
             try {
                 while (Utils.getUserId()==null|| Utils.getCookieString()==null) {
                     sleep(1000);
@@ -147,10 +145,8 @@ public class PlaybackFragment extends VideoFragment {
                 data.putString("jsonstring",js);
                 msg.setData(data);
                 handler.sendMessage(msg);
-                //Log.d("fetchResult",js.toString());
             } catch (Exception e) {
                 Log.e("Fetch Lectures", "Failed");
-                //e.printStackTrace();
             }
         }
     };
@@ -170,14 +166,11 @@ public class PlaybackFragment extends VideoFragment {
                 String vurl = jsObj.optString("re").split(",")[0];
                 Message msg = new Message();
                 Bundle data = new Bundle();
-                Log.d("vurl",vurl);
                 data.putString("videourl",vurl);
                 msg.setData(data);
                 handler.sendMessage(msg);
-                //Log.d("fetchResult",js.toString());
             } catch (Exception e) {
                 Log.e("Get Video Url", "Failed");
-                e.printStackTrace();
             }
         }
     }
@@ -233,7 +226,6 @@ public class PlaybackFragment extends VideoFragment {
         mPlayerGlue.setHost(new VideoFragmentGlueHost(this));
         mPlayerGlue.playWhenPrepared();
 
-        //play(mCourse);
 
     }
 
@@ -252,9 +244,6 @@ public class PlaybackFragment extends VideoFragment {
         try {
             new Thread(new netGetVideoUrl(vCourse)).start();
             mPlayerGlue.setTitle(vCourse.title);
-            //prepareMediaForPlaying(Uri.parse(Utils.getCourseUrl(mContext,Course.CourseUrl)));
-            //prepareMediaForPlaying(Uri.parse(getResources().getString(R.string.Courseplayback_url_prefix) + Course.CourseUrl));
-            //mPlayerGlue.play();
         } catch (Exception e) {
             mPlayerGlue.pause();
         }
@@ -274,13 +263,6 @@ public class PlaybackFragment extends VideoFragment {
     }
 
     private ArrayObjectAdapter initializeEpisodesRow() {
-        /*
-         * To add a new row to the mPlayerAdapter and not lose the controls row that is provided by the
-         * glue, we need to compose a new row with the controls row and our related Courses row.
-         *
-         * We start by creating a new {@link ClassPresenterSelector}. Then add the controls row from
-         * the media player glue, then add the related Courses row.
-         */
         ClassPresenterSelector presenterSelector = new ClassPresenterSelector();
         presenterSelector.addClassPresenter(
                 mPlayerGlue.getControlsRow().getClass(), mPlayerGlue.getPlaybackRowPresenter());
@@ -363,7 +345,6 @@ public class PlaybackFragment extends VideoFragment {
             mEpisodeActionAdapter = setupEpisodesCourses();
             ArrayObjectAdapter mRowsAdapter = initializeEpisodesRow();
             setAdapter(mRowsAdapter);
-            //play(mPlaylist.getFirstCourse());
         }
     }
 }
