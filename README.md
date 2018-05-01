@@ -4,6 +4,7 @@ This is an Android TV app, which is designed for watching your on-going or histo
 
 [![Build Status](https://travis-ci.org/q1yh/coursera-tv.svg?branch=master)](https://travis-ci.org/q1yh/coursera-tv)
 [![GitHub Release](https://img.shields.io/github/release/q1yh/coursera-tv.svg)](https://github.com/q1yh/coursera-tv/releases/)
+[![System Requirement](https://img.shields.io/badge/Android-v5.0%2B-red.svg)]()
 
 ## Getting Started
 
