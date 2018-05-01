@@ -30,7 +30,7 @@ As per request, I built the install package for those don't know how to build an
 
 System Requirement: Android TV (Android 5.0 or up)
 
-1. Download the [courseratv.apk](https://github.com/q1yh/coursera-tv/raw/master/courseratv-dist.apk) to your local storage.
+1. Download the [Coursera TV package file](https://github.com/q1yh/coursera-tv/raw/master/courseratv-dist.apk) to your local storage.
 
 2. Execute the apk file in your favorite file manager in Android, (ES File Manager, etc) complete the installation.
 
