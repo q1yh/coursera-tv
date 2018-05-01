@@ -3,7 +3,7 @@
 This is an Android TV app, which is designed for watching your on-going or historical Coursera lecture videos from your Android TV or devices. 
 
 [![Build Status](https://travis-ci.org/q1yh/coursera-tv.svg?branch=master)](https://travis-ci.org/q1yh/coursera-tv)
-[![GitHub Release](https://github.com/q1yh/coursera-tv/releases/download/1.0.0/courseratv-dist.apk)]()
+[![GitHub Release](https://img.shields.io/github/release/q1yh/coursera-tv.svg)](https://github.com/q1yh/coursera-tv/releases/)
 
 ## Getting Started
 
