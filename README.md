@@ -16,11 +16,11 @@ As per request, I built the install package for those don't know how to build an
 
 System Requirement: Android TV (Android 5.0 or up)
 
-Via Google Play Store:
+- Via Google Play Store:
 
 [CourserATV](https://play.google.com/store/apps/details?id=com.bundia.courseratv) now is available on Google Play Store.
 
-Via downloaded APK file:
+- Via downloaded APK file:
 
 1. Download the latest [Coursera TV package file](https://github.com/q1yh/coursera-tv/releases/) to your local storage.
 
