@@ -1,4 +1,4 @@
-# Coursera TV - Watching your Coursera lectures on Android TV
+# CourserATV - Watching your Coursera lectures on Android TV
 
 This is an Android TV app, which is designed for watching your on-going or historical Coursera lecture videos from your Android TV or devices. 
 
@@ -22,7 +22,7 @@ System Requirement: Android TV (Android 5.0 or up)
 
 - Via downloaded APK file:
 
-1. Download the latest [Coursera TV package file](https://github.com/q1yh/coursera-tv/releases/) to your local storage.
+1. Download the latest [CourserATV package file](https://github.com/q1yh/coursera-tv/releases/) to your local storage.
 
 2. Execute the apk file in your favorite file manager in Android, (ES File Manager, etc) complete the installation.
 
